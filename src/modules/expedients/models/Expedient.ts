@@ -1,11 +1,12 @@
 import { v4 as uuidv4 } from "uuid";
+import { ExpedientStatus } from "./ExpedientStatus";
 
 export class Expedient {
   static new(title: string, description: string) {
     if (!title || !description) {
       throw new Error("Title and description are required");
     }
-    return new Expedient(uuidv4(), title, description, false, new Date(), new Date());
+    return new Expedient(uuidv4(), title, description, false, new Date(), new Date(), ExpedientStatus.CREATED);
   }
 
   public readonly id: string;
@@ -15,13 +16,24 @@ export class Expedient {
   public createdAt: Date;
   public updatedAt: Date;
 
-  constructor(id: string, title: string, description: string, completed: boolean, createdAt: Date, updatedAt: Date) {
+  public status: ExpedientStatus;
+
+  constructor(
+    id: string,
+    title: string,
+    description: string,
+    completed: boolean,
+    createdAt: Date,
+    updatedAt: Date,
+    status: ExpedientStatus
+  ) {
     this.id = id;
     this.title = title;
     this.description = description;
     this.completed = completed;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+    this.status = status;
   }
 
   complete() {
@@ -44,8 +56,19 @@ export class Expedient {
       description ?? this.description,
       completed ?? this.completed,
       this.createdAt,
-      new Date()
+      new Date(),
+      this.status
     );
+  }
+
+  pay() {
+    this.status = ExpedientStatus.PAYMENT_SUCCESS;
+    this.updatedAt = new Date();
+  }
+
+  failPayment() {
+    this.status = ExpedientStatus.PAYMENT_FAILED;
+    this.updatedAt = new Date();
   }
 
   toPrimitives() {

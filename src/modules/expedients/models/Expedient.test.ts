@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { Expedient } from "./Expedient";
+import { ExpedientStatus } from "./ExpedientStatus";
 
 describe("Expedient", () => {
   describe("static new()", () => {
@@ -68,7 +69,7 @@ describe("Expedient", () => {
       const createdAt = new Date("2023-01-01");
       const updatedAt = new Date("2023-01-02");
 
-      const expedient = new Expedient(id, title, description, completed, createdAt, updatedAt);
+      const expedient = new Expedient(id, title, description, completed, createdAt, updatedAt, ExpedientStatus.CREATED);
 
       expect(expedient.id).toBe(id);
       expect(expedient.title).toBe(title);
@@ -76,6 +77,7 @@ describe("Expedient", () => {
       expect(expedient.completed).toBe(completed);
       expect(expedient.createdAt).toBe(createdAt);
       expect(expedient.updatedAt).toBe(updatedAt);
+      expect(expedient.status).toBe(ExpedientStatus.CREATED);
     });
   });
 

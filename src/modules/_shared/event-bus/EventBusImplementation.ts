@@ -9,7 +9,7 @@ export class EventBusImplementation implements EventBus {
   }
 
   publish(eventName: string, payload: any): Promise<void> {
-    console.log(`Event ${eventName} published with payload ${JSON.stringify(payload)}`);
+    console.log(`Event ${eventName} published with payload ${JSON.stringify(payload, null, 2)}`);
     this.eventEmitter.emit(eventName, payload);
     return Promise.resolve();
   }
