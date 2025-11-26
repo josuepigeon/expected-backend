@@ -11,7 +11,13 @@ export class NotificationSubscriber {
 
   private subscribeToEvents(eventBus: EventBus): void {
     // Subscribe to expedient-related events
-    const events = ["expedient.created", "expedient.updated", "expedient.deleted"];
+    const events = [
+      "expedient.created",
+      "expedient.updated",
+      "expedient.deleted",
+      "expedient.payment.success",
+      "expedient.payment.failure",
+    ];
 
     events.forEach((eventName) => {
       eventBus.subscribe(eventName, async (payload: any) => {

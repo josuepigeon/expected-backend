@@ -5,6 +5,10 @@ import { MemoryExpedientsRepository } from "./modules/expedients/repositories/Me
 import { SlackNotificationService } from "./modules/notifications/services/SlackNotificationService";
 import { MixpanelNotificationService } from "./modules/notifications/services/MixpanelNotificationService";
 import { NotificationSubscriber } from "./modules/notifications/NotificationSubscriber";
+import { PaymentsController } from "./modules/payments/controllers/PaymentsController";
+import { PaymentServiceImplementation } from "./modules/payments/services/PaymentServiceImplementation";
+import { PayExpedientUseCase } from "./modules/payments/use-cases/pay-expedient-use-case/PayExpedientUseCase";
+import { ExpedientPaymentSubscriber } from "./modules/expedients/ExpedientPaymentSubscriber";
 
 const app = express();
 
@@ -27,6 +31,17 @@ const mixpanelService = new MixpanelNotificationService(
 // Subscribe notifications to events
 new NotificationSubscriber(eventBus, [slackService, mixpanelService]);
 
+// Initialize payment services
+const paymentService = new PaymentServiceImplementation(
+  process.env.PAYMENT_API_URL || "https://api.payment-provider.com",
+  process.env.PAYMENT_API_KEY || "your-payment-api-key"
+);
+const paymentsController = new PaymentsController(paymentService, expedientsRepository, eventBus);
+
+// Subscribe expedient module to payment events
+new ExpedientPaymentSubscriber(eventBus, expedientsRepository);
+
 app.use(expedientsController.router);
+app.use(paymentsController.router);
 
 export default app;
