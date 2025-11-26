@@ -1,0 +1,75 @@
+@startuml Simplified Architecture Diagram
+
+skinparam backgroundColor #FFFFFF
+skinparam componentStyle rectangle
+skinparam linetype ortho
+
+package "Application" {
+  [Express App] as App
+}
+
+package "Controllers" {
+  [ExpedientsController] as ExpedientsController
+  [PaymentsController] as PaymentsController
+}
+
+package "Use Cases" as UseCases {
+  [CreateExpedientUseCase] as CreateUseCase
+  [UpdateExpedientUseCase] as UpdateUseCase
+  [PayExpedientUseCase] as PayUseCase
+  [HandlePaymentSuccessUseCase] as HandleSuccessUseCase
+  [HandlePaymentFailureUseCase] as HandleFailureUseCase
+}
+
+package "Models" {
+  [Expedient] as ExpedientModel
+  [PaymentMethod] as PaymentModel
+}
+
+package "Repositories" {
+  [MemoryExpedientsRepository] as Repository
+}
+
+package "ExternalServices" {
+  [SlackNotificationService] as SlackService
+  [MixpanelNotificationService] as MixpanelService
+  [PaymentServiceImplementation] as PaymentService
+}
+
+package "EventBus" {
+  [EventBusImplementation]
+}
+
+package "Notifications" {
+  [NotificationSubscriber] as NotificationSubscriber
+}
+
+' App to Controllers
+App --> ExpedientsController : routes
+App --> PaymentsController : routes
+
+' Controllers to Use Cases
+ExpedientsController --> CreateUseCase
+ExpedientsController --> UpdateUseCase
+PaymentsController --> PayUseCase
+
+' Use Cases to other packages
+UseCases --> Models
+UseCases --> Repository
+UseCases --> "ExternalServices"
+"EventBus" <-- UseCases  : publishes events
+
+' EventBus to Notifications
+"Notifications" -> EventBus  : subscribes to events
+
+
+
+note left of App
+  Express application
+  Initializes controllers
+  and wires dependencies
+end note
+
+
+@enduml
+
