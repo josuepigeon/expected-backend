@@ -19,8 +19,6 @@
   },
   "include": [
     "src/**/*",
-    "tests/payments.integration.test.ts",
-    "tests/app.integration.test.ts",
   ],
   "exclude": [
     "node_modules",
